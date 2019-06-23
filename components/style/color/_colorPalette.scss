@@ -1,0 +1,174 @@
+$hueStep: 2;
+$saturationStep: 16;
+$saturationStep2: 5;
+$brightnessStep1: 5;
+$brightnessStep2: 15;
+$lightColorCount: 5;
+$darkColorCount: 4;
+
+@function max($v1, $v2) {
+	@return if($v1 > $v2, $v1, $v2);
+}
+@function min($v1, $v2) {
+	@return if($v1 < $v2, $v1, $v2);
+}
+
+@function hsv_to_hsl($h, $s: 0, $v: 0) {
+	@if type_of($h) == 'list' {
+		$v: nth($h, 3);
+		$s: nth($h, 2);
+		$h: nth($h, 1);
+	}
+
+	@if unit($h) == 'deg' {
+		$h: 3.1415 * 2 * ($h / 360deg);
+	}
+	@if unit($s) == '%' {
+		$s: 0 + ($s / 100%);
+	}
+	@if unit($v) == '%' {
+		$v: 0 + ($v / 100%);
+	}
+
+	$ss: $s * $v;
+	$ll: (2 - $s) * $v;
+
+	@if $ll <= 1 {
+		$ss: $ss / $ll;
+	} @else if ($ll == 2) {
+		$ss: 0;
+	} @else {
+		$ss: $ss / (2 - $ll);
+	}
+
+	$ll: $ll / 2;
+
+	@return hsl(360deg * $h / (3.1415 * 2), percentage(max(0, min(1, $ss))), percentage(max(0, min(1, $ll))));
+}
+
+@function hsl_to_hsv($h, $ss: 0, $ll: 0) {
+	@if type_of($h) == 'list' {
+		$ll: nth($h, 3);
+		$ss: nth($h, 2);
+		$h: nth($h, 1);
+	} @else if type_of($h) == 'color' {
+		$ll: lightness($h);
+		$ss: saturation($h);
+		$h: hue($h);
+	}
+
+	@if unit($h) == 'deg' {
+		$h: 3.1415 * 2 * ($h / 360deg);
+	}
+	@if unit($ss) == '%' {
+		$ss: 0 + ($ss / 100%);
+	}
+	@if unit($ll) == '%' {
+		$ll: 0 + ($ll / 100%);
+	}
+
+	$ll: $ll * 2;
+
+	@if $ll <= 1 {
+		$ss: $ss * $ll;
+	} @else {
+		$ss: $ss * (2 - $ll);
+	}
+
+	$v: ($ll + $ss) / 2;
+	$s: (2 * $ss) / ($ll + $ss);
+
+	@return 360deg * $h / (3.1415 * 2), percentage(max(0, min(1, $s))), percentage(max(0, min(1, $v)));
+}
+
+@function rgb_to_hsv($color) {
+  @return hsl_to_hsv(hue($color), saturation($color), lightness($color));
+}
+
+@function hsv_to_rgb($hsv) {
+  $hsl: hsv_to_hsl($hsv);
+  @return mix($hsl, $hsl);
+}
+
+@function get_hue($hue, $i, $isLight) {
+  @if $hue >= 60 and $hue <= 240 {
+    @if $isLight {
+      $hue: $hue - $hueStep * $i;
+    } @else {
+      $hue: $hue + $hueStep * $i;
+    }
+  } @else {
+    @if $isLight {
+      $hue: $hue + $hueStep * $i;
+    } @else {
+      $hue: $hue - $hueStep * $i;
+    }
+  }
+
+  @if $hue < 0 {
+    $hue: $hue + 360;
+  } @else if $hue >= 360 {
+    $hue: $hue - 360;
+  }
+
+  @return round($hue);
+}
+
+@function get_saturation($saturation, $i, $isLight) {
+  @if $isLight {
+    $saturation: round($saturation) - $saturationStep * $i;
+  } @else if $i == $darkColorCount {
+    $saturation: round($saturation) + $saturationStep;
+  } @else {
+    $saturation: round($saturation) + $saturationStep2 * $i;
+  }
+
+  @if $saturation > 100 {
+    $saturation: 100;
+  }
+
+  @if $isLight and $i == $lightColorCount and $saturation > 10 {
+    $saturation: 10;
+  }
+
+  @if $saturation < 6 {
+    $saturation: 6;
+  }
+
+  @return $saturation + 0%;
+}
+
+@function get_value($value, $i, $isLight) {
+  $result: 0;
+  
+  @if $isLight {
+    $result: round($value) + $brightnessStep1 * $i;
+  } @else {
+    $result: round($value) - $brightnessStep2 * $i;
+  }
+  
+  @if $result > 100 {
+    $result: 100;
+  }
+  
+  @return $result + 0%;
+}
+
+@function colorPalette($color, $index) {
+  $isLight: $index <= 6;
+  
+  $i: 0;
+  @if $isLight {
+    $i: $lightColorCount + 1 - $index;
+  } @else {
+    $i: $index - $lightColorCount - 1;
+  }
+  
+  $hsv: rgb_to_hsv($color);
+  $h: get_hue(nth($hsv, 1), $i, $isLight);
+  $s: get_saturation(nth($hsv, 2), $i, $isLight);
+  $v: get_value(nth($hsv, 3), $i, $isLight);
+  $hsv: $h, $s, $v;
+
+  @return hsv_to_rgb($hsv);
+}
