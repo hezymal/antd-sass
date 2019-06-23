@@ -2,6 +2,11 @@
 
 SASS styles for customing [ant.design](https://ant.design/)
 
+## Reasons
+
+1. [create-react-app](https://github.com/facebook/create-react-app) cannot work with LESS (you should eject for LESS);
+2. As option.
+
 ## 📦 Install
 
 ```
