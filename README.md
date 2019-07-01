@@ -2,7 +2,7 @@
 
 SASS styles for customing [ant.design](https://ant.design/)
 
-## Reasons
+## ❓ Reasons
 
 1. [create-react-app](https://github.com/facebook/create-react-app) cannot work with LESS (you should eject for LESS);
 2. As option.
@@ -25,4 +25,13 @@ Same you can see example.
 
 ## ⌨️ Development
 
-This chapter in deployment...
+Run test
+```
+npm run sass-build
+npm test
+```
+
+Run example
+```
+npm run example
+```
