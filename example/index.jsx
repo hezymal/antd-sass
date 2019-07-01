@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { Button } from "antd";
 import "./index.scss";
 
-function App(props) {
+function App() {
     return (
         <Button>Push me</Button>
     );

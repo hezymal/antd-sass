@@ -7,12 +7,7 @@ const stylelint = require('gulp-stylelint');
 const outputDir = path.resolve(__dirname, 'tmp');
 
 function sassTask() {
-  const files = [
-    'components/**/index.scss',
-    'components/**/v2-compatible-reset.scss'
-  ];
-
-  return src(files)
+  return src(['tests/**/*.scss'])
     .pipe(sass({ outputStyle: "expanded", precision: 8 }))
     .pipe(autoprefixer())
     .pipe(stylelint({
@@ -26,3 +21,4 @@ function sassTask() {
 }
 
 exports.default = sassTask;
+ 

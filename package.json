@@ -52,11 +52,9 @@
     "webpack-dev-server": "^3.7.2"
   },
   "scripts": {
-    "sass-build": "gulp -f gulpfile.test.js",
-    "lint": "stylelint 'components/**/*.scss' --syntax scss",
-    "lint-fix": "stylelint --fix 'components/**/*.scss' --syntax sass",
+    "sass-build": "gulp -f test.gulpfile.js",
     "test": "node ./tests/index",
-    "build-example": "npx webpack-dev-server --config ./example.webpack.config.js"
+    "example": "npx webpack-dev-server --config ./example.webpack.config.js"
   },
   "browserslist": [
     "last 2 version",

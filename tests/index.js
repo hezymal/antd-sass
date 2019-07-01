@@ -34,8 +34,8 @@ function clearLine(line) {
     return result;
 }
 
-const MAX_COMPARE_FILES = 2;
-const SKIP_FILES = 64;
+const MAX_COMPARE_FILES = 100;
+const SKIP_FILES = 0;
 
 glob(sourcesDirectory + '/**/*.css', {}, (err, sourcesPaths) => {
     try {
